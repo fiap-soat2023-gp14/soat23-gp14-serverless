@@ -1,6 +1,6 @@
 variable "function_name" {
   description = "Function name"
-  default     = "authLambdaFiapProject"
+  default     = "auth-lambda"
 }
 
 variable "stage_name" {
@@ -9,7 +9,11 @@ variable "stage_name" {
 }
 
 variable "domain_name" {
-  default = "gp14-fiap-project"
+  default = "gp-14"
+}
+
+variable "sufix" {
+  default = "fiap-project"
 }
 
 variable "environment_variables" {
@@ -18,4 +22,12 @@ variable "environment_variables" {
   default = {
     myenvvar = "test"
   }
+}
+
+variable "default_region" {
+    default = "us-east-1"
+}
+
+variable "log_retention_in_days" {
+  default = 1
 }

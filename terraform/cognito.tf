@@ -1,4 +1,4 @@
-resource "aws_cognito_user_pool" "up-fiap-project" {
+resource "aws_cognito_user_pool" "user-pool" {
   name             = "auth-up-fiap-project"
   alias_attributes = ["preferred_username"]
 
@@ -18,11 +18,11 @@ resource "aws_cognito_user_pool" "up-fiap-project" {
 
   # Set to TRUE for project purposes, in real life should be FALSE (default)
   admin_create_user_config {
-    allow_admin_create_user_only = "true"
+    allow_admin_create_user_only = "false"
   }
 
   schema {
-    name                     = "cpf"
+    name                     = "document"
     attribute_data_type      = "String"
     developer_only_attribute = false
     mutable                  = false
@@ -32,17 +32,29 @@ resource "aws_cognito_user_pool" "up-fiap-project" {
       max_length = 11
     }
   }
+
+    schema {
+    name                     = "name"
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = true
+    required                 = false
+    string_attribute_constraints {
+      min_length = 4
+      max_length = 120
+    }
+  }
 }
 
-resource "aws_cognito_user_pool_client" "up-client-fiap-project" {
-  name = "auth-up-client-fiap-project"
+resource "aws_cognito_user_pool_client" "client" {
+  name = "auth-up-client-${var.sufix}"
 
-  user_pool_id = aws_cognito_user_pool.up-fiap-project.id
+  user_pool_id = aws_cognito_user_pool.user-pool.id
 
   explicit_auth_flows = ["ADMIN_NO_SRP_AUTH", "USER_PASSWORD_AUTH"]
 }
 
 resource "aws_cognito_user_pool_domain" "up-domain-fiap-project" {
-  domain       = var.domain_name
-  user_pool_id = aws_cognito_user_pool.up-fiap-project.id
+  domain       = "${var.domain_name}-${var.sufix}"
+  user_pool_id = aws_cognito_user_pool.user-pool.id
 }
