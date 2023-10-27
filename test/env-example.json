@@ -1,0 +1,7 @@
+{
+  "AuthFunction": {
+    "AWS_USER_POOL_ID": "user-pool-id",
+    "AWS_USER_POOL_REGION": "us-east-1",
+    "AWS_CLIENT_ID": "client-id"
+  }
+}
