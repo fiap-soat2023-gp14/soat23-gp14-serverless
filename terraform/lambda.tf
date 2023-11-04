@@ -1,11 +1,9 @@
 resource "aws_lambda_function" "lambda-function-fiap-project" {
-  filename      = "../src/bootstrap.zip"
   function_name = "${var.domain_name}-lambda"
   role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "bootstrap"
-
-  source_code_hash = filebase64sha256("../src/bootstrap.zip")
-  runtime          = "provided.al2"
+  image_uri = "495428969620.dkr.ecr.us-east-1.amazonaws.com/fiapauthlambda:latest"
+  architectures = ["x86_64"]
+  package_type = "Image"
 
   environment {
     variables = local.environment_variables
