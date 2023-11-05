@@ -31,8 +31,8 @@ jobs:
       env:
         REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
         REGISTRY_ALIAS: ${{ secrets.AWS_ECR_REGISTRY_ALIAS }}
-        REPOSITORY: fiap-soat2-project
-        IMAGE_TAG: fiap-soat2-project
+        REPOSITORY: fiap-soat2-gp14-lambda
+        IMAGE_TAG: fiap-soat2-gp14-lambda
       run: |
         docker build -t $IMAGE_TAG .
         docker tag $IMAGE_TAG:latest $REGISTRY/$REGISTRY_ALIAS/$IMAGE_TAG:latest
