@@ -56,3 +56,4 @@ jobs:
         with:
           function-name: soat2-gp-14-lambda
           image-uri: ${{ steps.build-image.outputs.image }}
+          package-type: image-uri
