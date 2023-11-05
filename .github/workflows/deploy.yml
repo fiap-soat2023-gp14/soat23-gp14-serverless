@@ -5,6 +5,10 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: ecr-lambda-project
+
 jobs:
 
   build:
@@ -19,24 +23,21 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR Public
-      id: login-ecr-public
-      uses: aws-actions/amazon-ecr-login@v1
-      with:
-        registry-type: public
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@62f4f872db3836360b72999f4b87f1ff13310f3a
 
     - name: Build, tag, and push docker image to Amazon ECR Public
+      id: build-image
       env:
-        REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-        REGISTRY_ALIAS: ${{ secrets.AWS_ECR_REGISTRY_ALIAS }}
-        REPOSITORY: fiap-soat2-gp14-lambda
-        IMAGE_TAG: fiap-soat2-gp14-lambda
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: latest
       run: |
-        docker build -t $IMAGE_TAG .
-        docker tag $IMAGE_TAG:latest $REGISTRY/$REGISTRY_ALIAS/$IMAGE_TAG:latest
-        docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
   deploy:
     name: Deploy lambda
@@ -48,10 +49,10 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Update lambda
         uses: int128/deploy-lambda-action@v1
         with:
           function-name: soat2-gp-14-lambda
-          image-uri: public.ecr.aws/${{ secrets.AWS_ECR_REGISTRY_ALIAS }}/fiap-soat2-gp14-lambda:latest
+          image-uri: ${{ steps.build-image.outputs.image }}
