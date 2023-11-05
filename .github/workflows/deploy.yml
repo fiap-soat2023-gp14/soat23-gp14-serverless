@@ -37,3 +37,18 @@ jobs:
         docker build -t $IMAGE_TAG .
         docker tag $IMAGE_TAG:latest $REGISTRY/$REGISTRY_ALIAS/$IMAGE_TAG:latest
         docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:latest
+
+  deploy:
+    name: Deploy lambda
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::ACCOUNT:role/ROLE
+      - name: Update lambda
+        uses: int128/deploy-lambda-action@v1
+        with:
+          function-name: soat2-gp-14-lambda
+          image-uri: public.ecr.aws/${{ secrets.AWS_ECR_REGISTRY_ALIAS }}/fiap-soat2-gp14-lambda:latest
