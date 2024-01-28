@@ -16,15 +16,13 @@ func Login(c *gin.Context) {
 	err := c.BindJSON(&body)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"err": err.Error(),
 		})
 		return
 	}
 
-	identityProvider := adapters.NewIdentityProvider(ctx)
-	domain := domain.NewUsersDomain(identityProvider)
-	accessToken, err := domain.Login(ctx, body)
+	cognitoClient, err := adapters.NewCognitoClient(ctx)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -32,6 +30,18 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
+
+	identityProvider := adapters.New(cognitoClient)
+	d := domain.NewUsersDomain(identityProvider)
+	accessToken, err := d.Login(ctx, body)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"err": err.Error(),
+		})
+		return
+	}
+
 	c.Header("Access-Token", accessToken)
 	c.JSON(http.StatusAccepted, gin.H{
 		"message": "success",

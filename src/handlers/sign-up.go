@@ -21,10 +21,17 @@ func SignUp(c *gin.Context) {
 		})
 		return
 	}
-
-	identityProvider := adapters.NewIdentityProvider(ctx)
-	domain := domain.NewUsersDomain(identityProvider)
-	if err := domain.CreateUser(ctx, body); err != nil {
+	cognitoClient, err := adapters.NewCognitoClient(ctx)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"err": err.Error(),
+		})
+		return
+	}
+	identityProvider := adapters.New(cognitoClient)
+	d := domain.NewUsersDomain(identityProvider)
+	if err := d.CreateUser(ctx, body); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"err": err.Error(),

@@ -43,3 +43,5 @@ samconfig.toml
 bin
 .env
 test/env.json
+.idea/*
+src/coverage.out*
