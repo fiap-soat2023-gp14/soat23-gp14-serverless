@@ -45,3 +45,4 @@ bin
 test/env.json
 .idea/*
 src/coverage.out*
+coverage/*
