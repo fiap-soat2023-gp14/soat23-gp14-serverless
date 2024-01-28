@@ -20,45 +20,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out the repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1-node16
+    - name: Setup go
+      uses: actions/setup-go@v5
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
-    
-    - name: Login to Amazon ECR Public
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+        go-version: '1.19'
+      run: make test
 
-    - name: Build, tag, and push docker image to Amazon ECR Public
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-    steps:
-      - name: Check out the repository
-        uses: actions/checkout@v4
-      - name: Setup go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.19'
-      - run: make test
-
-      - name: Store code coverage results
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-report
-          path: coverage
-          retention-days: 1
-          overwrite: true
+    - name: Store code coverage results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: coverage
+        retention-days: 1
+        overwrite: true
 
   sonar-validation:
     name: SonarCloud Validation
@@ -74,9 +50,6 @@ jobs:
         with:
           name: code-coverage-report
           path: coverage
-
-      - name: Display structure of downloaded files
-        run: ls -R
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
