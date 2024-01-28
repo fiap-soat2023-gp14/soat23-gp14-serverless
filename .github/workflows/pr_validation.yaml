@@ -26,6 +26,8 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version: '1.19'
+    
+    - name: Run tests
       run: make test
 
     - name: Store code coverage results
