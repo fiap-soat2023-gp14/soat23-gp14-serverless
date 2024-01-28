@@ -6,34 +6,33 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/oivinig/soat23-gp14-serverless/infra/settings"
 	"github.com/oivinig/soat23-gp14-serverless/models"
 )
 
-type Cognito struct {
-	client *cognitoidentityprovider.Client
+var newConfigFunc = cognito.NewFromConfig
+var defaultConfigFunc = config.LoadDefaultConfig
+var authType = awstypes.AuthFlowTypeUserPasswordAuth
+
+type IdentityProvider struct {
+	client Client
 }
 
-var (
-	authType = awstypes.AuthFlowTypeUserPasswordAuth
-)
+type Client interface {
+	SignUp(ctx context.Context, params *cognito.SignUpInput, optFns ...func(*cognito.Options)) (*cognito.SignUpOutput, error)
+	InitiateAuth(ctx context.Context, params *cognito.InitiateAuthInput, optFns ...func(*cognito.Options)) (*cognito.InitiateAuthOutput, error)
+}
 
-func NewIdentityProvider(ctx context.Context) *Cognito {
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		log.Printf("unable to load SDK config, %v", err)
-	}
-
-	c := cognitoidentityprovider.NewFromConfig(cfg)
-	return &Cognito{
-		client: c,
+func New(client Client) *IdentityProvider {
+	return &IdentityProvider{
+		client: client,
 	}
 }
 
-func (c *Cognito) SignUp(ctx context.Context, u models.UserForm) error {
-	_, err := c.client.SignUp(ctx, &cognitoidentityprovider.SignUpInput{
+func (i *IdentityProvider) SignUp(ctx context.Context, u models.UserForm) error {
+	_, err := i.client.SignUp(ctx, &cognito.SignUpInput{
 		ClientId: aws.String(settings.GetClientId()),
 		Password: aws.String(u.Password),
 		Username: aws.String(u.Document),
@@ -48,18 +47,18 @@ func (c *Cognito) SignUp(ctx context.Context, u models.UserForm) error {
 	return nil
 }
 
-func (c *Cognito) Login(ctx context.Context, u models.UserLogin) (string, error) {
+func (i *IdentityProvider) Login(ctx context.Context, u models.UserLogin) (string, error) {
 	params := map[string]string{
 		"PASSWORD": u.Password,
 		"USERNAME": u.Username,
 	}
-	input := &cognitoidentityprovider.InitiateAuthInput{
+	input := &cognito.InitiateAuthInput{
 		AuthFlow:       authType,
 		ClientId:       aws.String(settings.GetClientId()),
 		AuthParameters: params,
 	}
 
-	resp, err := c.client.InitiateAuth(ctx, input)
+	resp, err := i.client.InitiateAuth(ctx, input)
 	if err != nil {
 		return "", err
 	}
@@ -72,4 +71,15 @@ func AddAttr(name, value string) *awstypes.AttributeType {
 		Name:  aws.String(name),
 		Value: aws.String(value),
 	}
+}
+
+func NewCognitoClient(ctx context.Context) (*cognito.Client, error) {
+	cfg, err := defaultConfigFunc(ctx)
+	if err != nil {
+		log.Printf("unable to load SDK config, %v", err)
+		return nil, err
+	}
+
+	c := newConfigFunc(cfg)
+	return c, nil
 }
