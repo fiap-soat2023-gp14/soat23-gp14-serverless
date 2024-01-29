@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oivinig/soat23-gp14-serverless/domain"
-	"github.com/oivinig/soat23-gp14-serverless/infra/adapters"
-	"github.com/oivinig/soat23-gp14-serverless/models"
+	"soat23-gp14_fiap-lambda-application/domain"
+	"soat23-gp14_fiap-lambda-application/infra/adapters"
+	"soat23-gp14_fiap-lambda-application/models"
 )
 
 func SignUp(c *gin.Context) {

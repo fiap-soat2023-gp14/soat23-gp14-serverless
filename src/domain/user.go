@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/oivinig/soat23-gp14-serverless/models"
-	"github.com/oivinig/soat23-gp14-serverless/services"
+	"soat23-gp14_fiap-lambda-application/models"
+	"soat23-gp14_fiap-lambda-application/services"
 )
 
 type Users struct {

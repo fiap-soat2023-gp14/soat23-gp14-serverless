@@ -8,3 +8,8 @@ run-tests:
 test: 
 	@mkdir -p coverage
 	@cd src && go test -coverprofile=../coverage/coverage.out -coverpkg=./... ./... && go tool cover -func=../coverage/coverage.out
+
+.PHONY: sonar-test
+sonar-test:
+	@mkdir -p coverage
+	@cd src && go test -coverprofile=../coverage/coverage.out ./...

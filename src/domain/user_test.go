@@ -3,9 +3,9 @@ package domain
 import (
 	"context"
 	"errors"
-	"github.com/oivinig/soat23-gp14-serverless/models"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"soat23-gp14_fiap-lambda-application/models"
 	"testing"
 )
 

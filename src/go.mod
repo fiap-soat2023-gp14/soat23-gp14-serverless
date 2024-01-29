@@ -1,4 +1,4 @@
-module github.com/oivinig/soat23-gp14-serverless
+module soat23-gp14_fiap-lambda-application
 
 go 1.19
 
