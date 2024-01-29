@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	awstypes "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
-	"github.com/oivinig/soat23-gp14-serverless/infra/settings"
-	"github.com/oivinig/soat23-gp14-serverless/models"
+	"github.com/soat-2023-gp14/soat23-gp14_fiap-lambda-application/infra/settings"
+	"github.com/soat-2023-gp14/soat23-gp14_fiap-lambda-application/models"
 )
 
 var newConfigFunc = cognito.NewFromConfig
