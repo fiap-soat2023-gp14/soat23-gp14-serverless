@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/soat-2023-gp14/soat23-gp14_fiap-lambda-application/domain"
-	"github.com/soat-2023-gp14/soat23-gp14_fiap-lambda-application/infra/adapters"
-	"github.com/soat-2023-gp14/soat23-gp14_fiap-lambda-application/models"
+	"soat23-gp14_fiap-lambda-application/domain"
+	"soat23-gp14_fiap-lambda-application/infra/adapters"
+	"soat23-gp14_fiap-lambda-application/models"
 )
 
 var newCognitoClientFunc = adapters.NewCognitoClient

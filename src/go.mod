@@ -1,4 +1,4 @@
-module github.com/soat-2023-gp14/soat23-gp14_fiap-lambda-application
+module soat23-gp14_fiap-lambda-application
 
 go 1.19
 

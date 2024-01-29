@@ -7,9 +7,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
-	"github.com/soat-2023-gp14/soat23-gp14_fiap-lambda-application/models"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"soat23-gp14_fiap-lambda-application/models"
 	"testing"
 )
 
