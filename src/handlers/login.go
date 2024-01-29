@@ -10,6 +10,10 @@ import (
 	"github.com/oivinig/soat23-gp14-serverless/models"
 )
 
+var newCognitoClientFunc = adapters.NewCognitoClient
+var newIdentityProviderFunc = adapters.New
+var newUsersDomainFunc = domain.NewUsersDomain
+
 func Login(c *gin.Context) {
 	ctx := &gin.Context{}
 	body := models.UserLogin{}
@@ -22,7 +26,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	cognitoClient, err := adapters.NewCognitoClient(ctx)
+	cognitoClient, err := newCognitoClientFunc(ctx)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -31,8 +35,8 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	identityProvider := adapters.New(cognitoClient)
-	d := domain.NewUsersDomain(identityProvider)
+	identityProvider := newIdentityProviderFunc(cognitoClient)
+	d := newUsersDomainFunc(identityProvider)
 	accessToken, err := d.Login(ctx, body)
 	if err != nil {
 		log.Println(err)
